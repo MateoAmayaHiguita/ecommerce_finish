@@ -17,7 +17,7 @@ const products = [
     price: 14.0,
     image: "./img/featured1.png",
     category: "hoodies",
-    quantity: 10,
+    stock: 10,
   },
   {
     id: 2,
@@ -25,7 +25,7 @@ const products = [
     price: 24.0,
     image: "./img/featured2.png",
     category: "shirts",
-    quantity: 15,
+    stock: 15,
   },
   {
     id: 3,
@@ -33,7 +33,7 @@ const products = [
     price: 24.0,
     image: "./img/featured3.png",
     category: "sweatshirts",
-    quantity: 20,
+    stock: 20,
   },
 ];
 const cartShopping = [];
@@ -151,14 +151,40 @@ const addingProductsToCartShopping = () => {
   });
 };
 
+container.addEventListener("click", function (e) {
+  if (e.target.classList.contains("btn-plus")) {
+    const id = e.target.parentElement.id;
+
+    let findProduct = seacrProduct(id);
+
+    if (findProduct.stock === 0) return alert("stock no disponible");
+    if (objCart[id]) {
+      verifyAddToCart(findProduct, id);
+    } else {
+      objCart[id] = {
+        ...findProduct,
+        amount: 1,
+      };
+    }
+
+    localStorage.setItem("objCart", JSON.stringify(objCart));
+  }
+  printProductsInCart();
+  printTotalCart();
+  printAmountCart();
+});
+// *******Esta seccion es la que suma en el carrito*****
 const cartActionsButton = () => {
   shoppingcart.addEventListener("click", (e) => {
     const buttonClicked = e.target.getAttribute("data-id");
     const validar = cartShopping.filter((item) => item.id == buttonClicked);
+    //**** Esta suma****
     if (e.target.classList[1] === "bx-plus")
       validar[0].addCount = validar[0].addCount + 1;
+    //****Este resta******
     if (e.target.classList[1] === "bx-minus")
       validar[0].addCount = validar[0].addCount - 1;
+    //****Este borra****
     if (e.target.classList[1] === "bx-trash") validar[0].addCount = 0;
     addingProductsCartDom();
     countItemsCartDom();
@@ -166,7 +192,7 @@ const cartActionsButton = () => {
     localStorage.setItem("cart", JSON.stringify(cartShopping));
   });
 };
-
+// ***** Hasta aca es la seccion de sumar del carrito******
 const addingProductsCartDom = (e) => {
   let cant = getCountItems();
 
@@ -210,7 +236,7 @@ const addingProductsCartDom = (e) => {
                                           item.id
                                         } class='bx bx-trash' ></i></span>
                                     </div>
-    
+
                                 </div>
                             </div>
                         </div>`;
@@ -340,4 +366,5 @@ navPosition();
 addingProductsDom();
 addingProductsToCartShopping();
 cartActionsButton();
+container();
 addingProductsCartDom();
